@@ -1,0 +1,13 @@
+.users-page { display: grid; gap: 14px; }
+.users-page .module-heading { margin-bottom: 3px; }
+.users-summary { display: flex; align-items: baseline; gap: 8px; padding: 13px 16px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); color: var(--muted); font-size: 10px; }
+.users-summary strong { color: var(--ink); font-size: 18px; }
+.users-role-legend { margin-left: auto; }
+.users-create-form { margin: 0; }
+.users-create-form select, .users-page td select, .users-page td input { height: 33px; min-width: 115px; border: 1px solid var(--line); border-radius: 4px; padding: 0 8px; background: var(--surface); color: var(--ink); font: inherit; font-size: 10px; }
+.users-create-form .module-form-actions { justify-content: flex-end; }
+.user-admin-actions { display: flex; align-items: center; gap: 7px; min-width: 250px; }
+.user-admin-actions input { min-width: 0; width: 170px; height: 32px; border: 1px solid var(--line); border-radius: 4px; padding: 0 8px; font-size: 10px; }
+.user-admin-actions button { flex: none; }
+.users-notice { margin: 0; border-left: 3px solid var(--green); padding: 9px 12px; background: #f0fdf4; color: #166534; font-size: 11px; }
+@media (max-width: 760px) { .users-role-legend { display: none; }.user-admin-actions { min-width: 220px; }.users-page .module-table-wrap { overflow-x: auto; } }

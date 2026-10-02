@@ -1,0 +1,109 @@
+.navigation {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #334155 transparent;
+}
+
+.nav-label {
+  padding-top: 2px;
+  margin-top: 18px;
+}
+
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-group-trigger {
+  min-height: 36px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 5px;
+  color: #cbd5e1;
+  background: transparent;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  transition: color .15s ease, background-color .15s ease;
+}
+
+.nav-group-trigger:hover,
+.nav-group.open > .nav-group-trigger {
+  color: #fff;
+  background: var(--navy-soft);
+}
+
+.nav-group-trigger b {
+  margin-left: auto;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 400;
+  transition: transform .15s ease;
+}
+
+.nav-group-trigger:focus-visible,
+.nav-item:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+}
+
+.nav-group.open > .nav-group-trigger b {
+  color: var(--cyan);
+  transform: rotate(180deg);
+}
+
+.nav-group-items {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 3px 2px 7px 19px;
+  padding: 2px 0 2px 12px;
+  border-left: 1px solid #3b4b63;
+}
+
+.nav-item-nested {
+  min-height: 33px;
+  padding: 8px 9px;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 3px;
+  transition: color .15s ease, background-color .15s ease, box-shadow .15s ease;
+}
+
+.nav-item-nested:hover {
+  color: #f8fafc;
+  background: #1e293b;
+}
+
+.nav-item-nested.active {
+  color: #dbeafe;
+  background: #172f58;
+  box-shadow: inset 2px 0 var(--blue);
+}
+
+.nav-item-nested .nav-icon {
+  width: 14px;
+  font-size: 13px;
+}
+
+.nav-item-nested.active .nav-icon {
+  color: #60a5fa;
+}
+
+.sidebar-collapsed .nav-group-trigger {
+  justify-content: center;
+  padding-inline: 0;
+}
+
+.sidebar-collapsed .nav-group-trigger span:nth-child(2),
+.sidebar-collapsed .nav-group-trigger b {
+  display: none;
+}

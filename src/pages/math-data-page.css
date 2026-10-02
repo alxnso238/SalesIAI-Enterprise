@@ -1,0 +1,22 @@
+.math-data-page { display: grid; gap: 14px; }
+.math-data-page .module-heading { margin-bottom: 0; }
+.math-editor { display: grid; gap: 16px; margin: 0; }
+.math-name-field { display: grid; max-width: 520px; gap: 6px; color: var(--muted); font-size: 10px; font-weight: 700; }
+.math-name-field input, .vector-editor input, .matrix-editor input { height: 36px; border: 1px solid var(--line); border-radius: 4px; padding: 0 9px; color: var(--ink); background: var(--surface); font-size: 12px; }
+.math-name-field input:focus, .vector-editor input:focus, .matrix-editor input:focus { outline: 2px solid color-mix(in srgb, var(--cyan) 25%, transparent); border-color: var(--cyan); }
+.matrix-editor-wrap { display: grid; justify-items: start; gap: 12px; overflow-x: auto; }
+.matrix-editor { width: auto; border-collapse: separate; border-spacing: 5px; }
+.matrix-editor td { padding: 0; border: 0; }
+.matrix-editor input { width: 82px; text-align: center; font-variant-numeric: tabular-nums; }
+.math-editor-tools { display: flex; flex-wrap: wrap; gap: 7px; }
+.vector-editor { display: flex; flex-wrap: wrap; align-items: end; gap: 9px; }
+.vector-editor label { display: grid; gap: 5px; color: var(--muted); font-size: 9px; font-weight: 700; }
+.vector-editor label span { padding-left: 2px; }
+.vector-editor input { width: 88px; }
+.vector-editor label button { border: 0; color: var(--muted); background: transparent; cursor: pointer; }
+.vector-editor label button:disabled { visibility: hidden; }
+.math-editor .module-form-actions { margin-top: 2px; }
+.math-record-actions { display: flex; gap: 10px; white-space: nowrap; }
+.math-record-actions button { padding: 5px 8px; border: 1px solid var(--line); border-radius: 4px; color: var(--blue); background: var(--surface); font-size: 10px; cursor: pointer; }
+.math-data-notice { margin: 0; border-left: 3px solid var(--green); padding: 9px 12px; color: #166534; background: #f0fdf4; font-size: 11px; }
+@media (max-width: 520px) { .matrix-editor input { width: 64px; }.math-editor { padding: 14px; }.vector-editor input { width: 74px; } }
