@@ -71,6 +71,11 @@ def test_analytics_uses_completed_sales_as_statistical_observations():
     assert report.json()["average_sale"] == 200
     assert report.json()["median_sale"] == 200
     assert report.json()["insights"][0]["evidence"]["sales_count"] == 2
+    assert report.json()["sales_by_customer"] == [{
+        "customer": "Cliente Analytics",
+        "revenue": 400.0,
+        "sales_count": 2,
+    }]
 
 
 def test_statistics_requires_nonempty_values():
@@ -130,6 +135,11 @@ def test_analytics_filters_by_date_branch_seller_and_product_category():
     assert report.json()["sales_count"] == 1
     assert report.json()["total_revenue"] == 40
     assert report.json()["filter_options"]["categories"] == ["Accessories", "Home"]
+    assert report.json()["sales_by_seller"] == [{
+        "seller": "admin-test@example.test",
+        "revenue": 40.0,
+        "sales_count": 1,
+    }]
 
 
 def test_dataset_variable_analysis_uses_persisted_observations():

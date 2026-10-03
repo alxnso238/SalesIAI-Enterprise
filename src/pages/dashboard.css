@@ -1,4 +1,71 @@
 .dashboard-page { width: 100%; }
+.dashboard-module-tabs { display: flex; gap: 5px; overflow-x: auto; margin: 0 0 14px; padding: 4px; border: 1px solid #2a3037; border-radius: 6px; background: #111315; scrollbar-width: thin; }
+.dashboard-module-tabs button { flex: 0 0 auto; min-height: 34px; padding: 0 14px; border: 0; border-radius: 4px; background: transparent; color: #a5b0bc; font: inherit; font-size: 10px; font-weight: 700; cursor: pointer; transition: background-color 160ms ease, color 160ms ease; }
+.dashboard-module-tabs button:hover, .dashboard-module-tabs button:focus-visible { color: #fff; }
+.dashboard-module-tabs button.active { background: #1b3a54; color: #d8f0f1; }
+.dashboard-module-tabs button:focus-visible { outline: 2px solid #39aebb; outline-offset: 2px; }
+.dashboard-filters { display: grid; grid-template-columns: repeat(5, minmax(105px, 1fr)) auto; align-items: end; gap: 10px; margin-bottom: 17px; padding: 13px; border: 1px solid #2a3037; border-radius: 6px; background: #111315; }
+.dashboard-filters label { display: grid; gap: 6px; color: #99a5b2; font-size: 9px; font-weight: 700; }
+.dashboard-filters input, .dashboard-filters select { width: 100%; min-width: 0; height: 34px; border: 1px solid #303741; border-radius: 4px; padding: 0 8px; background: #191c1f; color: #e4e9ee; font: inherit; font-size: 10px; }
+.dashboard-filters button { min-height: 34px; border: 1px solid #34434b; border-radius: 4px; padding: 0 10px; background: transparent; color: #9bbec3; font: inherit; font-size: 9px; cursor: pointer; }
+.dashboard-filters button:hover { border-color: #278a96; background: #122a2d; color: #d6f3f2; }
+.dashboard-preview-notice { margin: 0 0 16px; border-left: 3px solid #3aa6a7; padding: 9px 12px; background: #142426; color: #a9c6c5; font-size: 10px; }
+.dashboard-module-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 17px; }
+.dashboard-module-panel { min-width: 0; min-height: 240px; }
+.dashboard-module-section { scroll-margin-top: 76px; margin-bottom: 22px; }
+.dashboard-module-wide { grid-column: 1 / -1; }
+.dashboard-seller-list, .dashboard-rotation-list, .dashboard-insight-list { display: grid; gap: 15px; padding: 18px 20px; }
+.dashboard-seller-row > div, .dashboard-rotation-list > div > div { display: flex; justify-content: space-between; gap: 12px; }
+.dashboard-seller-row strong, .dashboard-rotation-list strong { overflow: hidden; color: #e7edf1; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.dashboard-seller-row span, .dashboard-rotation-list span, .dashboard-rotation-list small { color: #8d99a8; font-size: 9px; }
+.dashboard-seller-row i, .dashboard-rotation-list i { display: block; height: 6px; margin-top: 8px; overflow: hidden; border-radius: 6px; background: #2b323a; }
+.dashboard-seller-row em, .dashboard-rotation-list em { display: block; height: 100%; border-radius: inherit; background: #26a9ae; }
+.dashboard-rotation-list small { display: block; margin-top: 5px; }
+.dashboard-branch-list, .dashboard-customer-directory, .dashboard-customer-list, .dashboard-product-catalog { display: grid; gap: 0; padding: 10px 20px 18px; }
+.dashboard-branch-list > div, .dashboard-customer-directory > div, .dashboard-customer-list > div, .dashboard-product-catalog > div { display: flex; min-width: 0; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #282f36; }
+.dashboard-branch-list > div > div { display: flex; flex: 1; justify-content: space-between; gap: 12px; }
+.dashboard-branch-list strong, .dashboard-customer-list strong, .dashboard-customer-directory strong, .dashboard-product-catalog strong { overflow: hidden; color: #e8edf1; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.dashboard-branch-list span, .dashboard-customer-list > div > span:not(.dashboard-customer-avatar), .dashboard-customer-directory > div > span:last-child, .dashboard-product-catalog b, .dashboard-product-catalog em { color: #a3aeb9; font-size: 9px; font-style: normal; white-space: nowrap; }
+.dashboard-branch-list i { display: block; height: 5px; margin-top: 7px; overflow: hidden; border-radius: 5px; background: #2b323a; }
+.dashboard-branch-list em { display: block; height: 100%; border-radius: inherit; background: #26a9ae; }
+.dashboard-customer-avatar { display: grid; flex: 0 0 28px; width: 28px; aspect-ratio: 1; place-items: center; border-radius: 50%; background: #1a3a50; color: #8dc9d0; font-size: 10px; font-weight: 700; }
+.dashboard-customer-list strong { flex: 1; }
+.dashboard-customer-list b { color: #ecf1f4; font-size: 9px; white-space: nowrap; }
+.dashboard-customer-directory > div > span:first-child, .dashboard-product-catalog > div > span { display: grid; flex: 1; min-width: 0; gap: 4px; }
+.dashboard-customer-directory small, .dashboard-product-catalog small { overflow: hidden; color: #7f8b98; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+.dashboard-product-catalog > div { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; }
+.dashboard-calculator { display: grid; gap: 12px; padding: 18px 20px; }
+.dashboard-calculator label { display: grid; gap: 6px; color: #9ba7b3; font-size: 9px; font-weight: 700; }
+.dashboard-calculator input, .dashboard-calculator textarea { width: 100%; min-width: 0; border: 1px solid #303741; border-radius: 4px; padding: 9px 10px; background: #191c1f; color: #e4e9ee; font: inherit; font-size: 10px; resize: vertical; }
+.dashboard-calculator button { min-height: 35px; border: 1px solid #2867eb; border-radius: 4px; padding: 0 12px; background: #2867eb; color: #fff; font: inherit; font-size: 10px; font-weight: 700; cursor: pointer; }
+.dashboard-calculator button:disabled { border-color: #3b4650; background: #303944; color: #9aa5b0; cursor: not-allowed; }
+.dashboard-calculator > small { color: #d6ad62; font-size: 9px; }
+.dashboard-calculator > p[role="alert"] { margin: 0; color: #ff9a9a; font-size: 10px; }
+.dashboard-bayes-form { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; }
+.dashboard-bayes-form button, .dashboard-bayes-form > small, .dashboard-bayes-form > p, .dashboard-bayes-form .dashboard-calculation-result { grid-column: 1 / -1; }
+.dashboard-calculation-result { display: flex; flex-wrap: wrap; gap: 10px 20px; border-left: 2px solid #26a9ae; padding: 10px 12px; background: #162426; color: #95a5ae; font-size: 9px; }
+.dashboard-calculation-result span { display: grid; gap: 4px; }
+.dashboard-calculation-result b { color: #e7f0f1; font-size: 12px; }
+.dashboard-inventory-metrics, .dashboard-stat-comparison { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 18px 20px; }
+.dashboard-inventory-metrics > div, .dashboard-stat-comparison > div { display: grid; min-height: 82px; align-content: center; gap: 8px; border: 1px solid #2a3037; border-radius: 5px; padding: 12px; background: #191c1f; }
+.dashboard-inventory-metrics span, .dashboard-stat-comparison span { color: #94a0ad; font-size: 9px; }
+.dashboard-inventory-metrics strong, .dashboard-stat-comparison strong { color: #f0f3f6; font-size: 16px; }
+.dashboard-insight-list article { border-left: 2px solid #24a9aa; padding: 2px 0 2px 12px; }
+.dashboard-insight-list article > span, .dashboard-insight-list article small { color: #82909d; font-size: 8px; }
+.dashboard-insight-list article strong { display: block; margin: 5px 0; color: #e8edf1; font-size: 11px; }
+.dashboard-insight-list article p { margin: 0 0 6px; color: #a1acb7; font-size: 10px; line-height: 1.5; }
+
+@media (max-width: 1100px) { .dashboard-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 700px) {
+	.dashboard-module-tabs { overflow-x: auto; }
+	.dashboard-module-tabs button { flex: 1 0 auto; padding-inline: 10px; }
+	.dashboard-filters, .dashboard-module-grid { grid-template-columns: 1fr; }
+	.dashboard-inventory-metrics, .dashboard-stat-comparison { grid-template-columns: 1fr; }
+	.dashboard-bayes-form { grid-template-columns: 1fr; }
+	.dashboard-bayes-form button, .dashboard-bayes-form > small, .dashboard-bayes-form > p, .dashboard-bayes-form .dashboard-calculation-result { grid-column: auto; }
+	.dashboard-customer-list > div { flex-wrap: wrap; }
+	.dashboard-customer-list strong { flex: 1 1 calc(100% - 44px); }
+}
 .dashboard-page .kpi-grid.compact-kpis { grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); }
 .dashboard-guidance { margin: 12px 20px 0; padding: 9px 11px; border-left: 2px solid var(--cyan); background: #f0f9ff; color: #475569; font-size: 10px; line-height: 1.6; }
 .dashboard-empty { padding: 12px 0; color: var(--muted); font-size: 11px; line-height: 1.6; }

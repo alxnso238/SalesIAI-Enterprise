@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './contexts/useAuth';
 import { HomePage } from './pages/HomePage';
@@ -13,11 +13,15 @@ import { SalesPage } from './pages/SalesPage';
 import { AnalyticsPage } from './pages/AnalyticsPage';
 import { PlaceholderPage } from './pages/PlaceholderPage';
 import './App.css';
+import './enterprise-theme.css';
 
 // Componente para proteger las rutas privadas del Dashboard
 const ProtectedLayout: React.FC = () => {
   const { user } = useAuth();
-  if (!user) {
+  const location = useLocation();
+  const allowDashboardPreview = true;
+  const isDashboardPreview = allowDashboardPreview && location.pathname === '/dashboard';
+  if (!user && !isDashboardPreview) {
     return <Navigate to="/login" replace />;
   }
   return <AppLayout />;
@@ -39,13 +43,9 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* 1. EL HOME ES LA VISTA PRINCIPAL (RAÍZ) */}
           <Route path="/" element={<HomePage />} />
-
-          {/* 2. PÁGINA DE AUTENTICACIÓN (LOGIN / REGISTRO) */}
           <Route path="/login" element={<LoginPage />} />
 
-          {/* 3. SISTEMA PRINCIPAL / DASHBOARD PROTEGIDO */}
           <Route element={<ProtectedLayout />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/ventas" element={<RoleRoute roles={businessRoles}><SalesPage /></RoleRoute>} />

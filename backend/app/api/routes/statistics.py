@@ -94,12 +94,23 @@ def get_analytics(
         for sale in completed
     ]
     monthly_sales: dict[str, float] = {}
+    seller_revenue: dict[str, float] = {}
+    seller_counts: dict[str, int] = {}
+    customer_revenue: dict[str, float] = {}
+    customer_counts: dict[str, int] = {}
     for sale in completed:
         timestamp = sale.created_at
         if timestamp.tzinfo is None:
             timestamp = timestamp.replace(tzinfo=UTC)
         month = timestamp.strftime("%Y-%m")
-        monthly_sales[month] = monthly_sales.get(month, 0) + float(sale.payload.get("amount", 0) or 0)
+        amount = float(sale.payload.get("amount", 0) or 0)
+        monthly_sales[month] = monthly_sales.get(month, 0) + amount
+        seller = str(sale.payload.get("seller_email") or "Sin vendedor").strip() or "Sin vendedor"
+        seller_revenue[seller] = seller_revenue.get(seller, 0) + amount
+        seller_counts[seller] = seller_counts.get(seller, 0) + 1
+        customer = str(sale.payload.get("customer") or "Sin cliente").strip() or "Sin cliente"
+        customer_revenue[customer] = customer_revenue.get(customer, 0) + amount
+        customer_counts[customer] = customer_counts.get(customer, 0) + 1
     return {
         "sales_count": len(completed),
         "total_revenue": sum(amounts),
@@ -115,6 +126,14 @@ def get_analytics(
         "sales_by_month": [
             {"month": month, "total": total}
             for month, total in sorted(monthly_sales.items())[-12:]
+        ],
+        "sales_by_seller": [
+            {"seller": seller, "revenue": revenue, "sales_count": seller_counts[seller]}
+            for seller, revenue in sorted(seller_revenue.items(), key=lambda item: item[1], reverse=True)
+        ],
+        "sales_by_customer": [
+            {"customer": customer, "revenue": revenue, "sales_count": customer_counts[customer]}
+            for customer, revenue in sorted(customer_revenue.items(), key=lambda item: item[1], reverse=True)
         ],
         "sales_by_product": _product_summary(completed),
     }
