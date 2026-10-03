@@ -21,15 +21,15 @@ export const HomePage: React.FC = () => {
       subtitle: 'Monitoreo en tiempo real',
       description: 'Panel de control con métricas financieras, inventarios valorizados y KPIs corporativos.',
       image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
-      details: 'El Dashboard Ejecutivo centraliza la información clave de MatrixFlow Enterprise. Permite visualizar el flujo de operaciones, ingresos por sucursal y el rendimiento general de los procesos mediante gráficos interactivos actualizados al instante.'
+      details: 'El Dashboard Ejecutivo centraliza ventas, ingresos por sucursal, inventario y el rendimiento comercial mediante indicadores actualizados desde la operación.'
     },
     {
       id: 'math',
-      title: 'ANÁLISIS MATEMÁTICO',
-      subtitle: 'Herramientas de cálculo vectorial',
-      description: 'Módulo especializado para operaciones matriciales, determinantes y combinaciones lineales.',
+      title: 'ANALÍTICA ESTADÍSTICA',
+      subtitle: 'Estadística aplicada a las ventas',
+      description: 'Media, mediana, variables aleatorias, probabilidades e insights comerciales.',
       image: 'https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=800&q=80',
-      details: 'Diseñado para la optimización de procesos logísticos y de inventario. Permite ejecutar operaciones avanzadas con matrices, resolución de sistemas de ecuaciones lineales y proyecciones basadas en modelos matemáticos.'
+      details: 'El módulo Analytics convierte las ventas registradas en indicadores, comparaciones de media y mediana, cálculos de Bayes y observaciones comerciales explicables.'
     },
     {
       id: 'management',
@@ -46,8 +46,8 @@ export const HomePage: React.FC = () => {
       {/* Barra de navegación */}
       <header className="home-nav">
         <Link to="/" className="home-brand">
-          <span className="home-brand-mark">M</span>
-          <span>MatrixFlow <b>Enterprise</b></span>
+          <span className="home-brand-mark">S</span>
+          <span>SalesIA <b>Enterprise</b></span>
         </Link>
         <div className="home-nav-actions">
           <Link to="/login" className="home-btn-outline">Iniciar Sesión</Link>
@@ -59,10 +59,10 @@ export const HomePage: React.FC = () => {
       <main className="home-hero">
         <span className="home-badge">Plataforma Empresarial Fase 1</span>
         <h1 className="home-title">
-          Control y Análisis Avanzado para <span>MatrixFlow Enterprise</span>
+          Gestión de ventas y analítica para <span>SalesIA Enterprise</span>
         </h1>
         <p className="home-description">
-          Sistema integral optimizado para la gestión gerencial, inventarios dinámicos, análisis matemático empresarial y control ejecutivo en tiempo real.
+          Sistema empresarial que conecta ventas, inventario y análisis estadístico para convertir cada operación en información comercial útil.
         </p>
         <Link to="/login" className="home-cta-primary">Acceder al Sistema</Link>
       </main>
@@ -139,7 +139,7 @@ export const HomePage: React.FC = () => {
 
       {/* Pie de página */}
       <footer className="home-footer">
-        © 2026 MatrixFlow Enterprise · Plan maestro · Fase 1 · Todos los derechos reservados.
+        © 2026 SalesIA Enterprise · Gestión comercial y Analytics.
       </footer>
     </div>
   );

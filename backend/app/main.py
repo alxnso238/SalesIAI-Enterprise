@@ -10,7 +10,7 @@ from app.api.routes import api_router
 app = FastAPI(
     title=settings.app_name,
     version="0.1.0",
-    description="API de ventas, inventario y algebra lineal empresarial",
+    description="API empresarial de ventas, inventario y analítica estadística",
 )
 
 app.add_middleware(
@@ -26,7 +26,7 @@ app.include_router(api_router, prefix=settings.api_prefix)
 
 @app.get("/health", tags=["health"])
 def health_check() -> dict[str, str]:
-    return {"status": "ok", "service": "matrixflow-api", "version": app.version}
+    return {"status": "ok", "service": "salesia-api", "version": app.version}
 
 
 @app.get("/ready", tags=["health"])

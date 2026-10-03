@@ -24,6 +24,18 @@ class Sale(Base):
         index=True,
     )
 
+    customer_id: Mapped[int | None] = mapped_column(
+        ForeignKey("customers.id", name="fk_sales_customer_id_customers"),
+        nullable=True,
+        index=True,
+    )
+
+    employee_id: Mapped[int | None] = mapped_column(
+        ForeignKey("employees.id", name="fk_sales_employee_id_employees"),
+        nullable=True,
+        index=True,
+    )
+
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id"),
         nullable=False,

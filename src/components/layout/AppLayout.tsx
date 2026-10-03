@@ -4,25 +4,24 @@ import { useAuth } from '../../contexts/useAuth'
 import { apiRequest, apiRoutes } from '../../services/api'
 import './nav.css'
 
-type NavigationItem = { label: string; path: string; icon: string; adminOnly?: boolean }
+type NavigationItem = { label: string; path: string; icon: string; adminOnly?: boolean; analyticsOnly?: boolean }
 
 const mainNavigation: NavigationItem[] = [
   { label: 'Dashboard', path: '/dashboard', icon: '▦' },
   { label: 'Ventas', path: '/ventas', icon: '↗' },
+  { label: 'Analytics', path: '/analytics', icon: '∿' },
+  { label: 'Datasets', path: '/datasets', icon: '▤', analyticsOnly: true },
+  { label: 'Variables', path: '/dataset-variables', icon: '⌁', analyticsOnly: true },
+  { label: 'Observaciones', path: '/observations', icon: '◷', analyticsOnly: true },
   { label: 'Inventario', path: '/inventario', icon: '▤' },
 ]
 
 const companyNavigation: NavigationItem[] = [
   { label: 'Sucursales', path: '/sucursales', icon: '⌗' },
+  { label: 'Clientes', path: '/clientes', icon: '♙' },
+  { label: 'Vendedores', path: '/vendedores', icon: '♧' },
   { label: 'Productos', path: '/productos', icon: '□' },
   { label: 'Metas', path: '/metas', icon: '◎', adminOnly: true },
-]
-
-const analysisNavigation: NavigationItem[] = [
-  { label: 'Vectores', path: '/vectores', icon: '◇' },
-  { label: 'Matrices', path: '/matrices', icon: '▧' },
-  { label: 'Operaciones', path: '/operaciones', icon: '∑' },
-  { label: 'Combinaciones lineales', path: '/combinaciones-lineales', icon: '⌁' },
 ]
 
 function NavigationLink({ item, nested = false }: { item: NavigationItem; nested?: boolean }) {
@@ -48,16 +47,15 @@ export function AppLayout() {
   const [companyName, setCompanyName] = useState('Sin empresa')
   const [sidebarOpen, setSidebarOpen] = useState(() => {
     if (typeof window === 'undefined') return true
-    return localStorage.getItem('matrixflow|sidebar') !== 'closed'
+    return localStorage.getItem('salesia|sidebar') !== 'closed'
   })
   const companyActive = companyNavigation.some((item) => location.pathname === item.path)
-  const analysisActive = analysisNavigation.some((item) => location.pathname === item.path)
   const role = user?.role ?? 'viewer'
   const isAdmin = role === 'admin'
+  const canManageAnalytics = isAdmin || role === 'analyst'
   const canOperateBusiness = isAdmin || role === 'member'
-  const canAnalyze = isAdmin || role === 'member' || role === 'analyst'
   const visibleMainNavigation = mainNavigation.filter((item) =>
-    item.path === '/dashboard' || (canOperateBusiness && ['/ventas', '/inventario'].includes(item.path)),
+    item.path === '/dashboard' || item.path === '/analytics' || (item.analyticsOnly && canManageAnalytics) || (canOperateBusiness && ['/ventas', '/inventario'].includes(item.path)),
   )
   useEffect(() => {
     let active = true
@@ -74,7 +72,7 @@ export function AppLayout() {
 
   const toggleSidebar = () => {
     setSidebarOpen((open) => {
-      localStorage.setItem('matrixflow|sidebar', open ? 'closed' : 'open')
+      localStorage.setItem('salesia|sidebar', open ? 'closed' : 'open')
       return !open
     })
   }
@@ -82,15 +80,15 @@ export function AppLayout() {
   return <div className={`app-shell ${sidebarOpen ? '' : 'sidebar-collapsed'} ${location.pathname === '/dashboard' ? 'dashboard-theme' : ''} ${location.pathname === '/ventas' ? 'sales-theme' : ''}`}>
     <header className="topbar">
       <button className="sidebar-toggle" type="button" onClick={toggleSidebar} aria-label="Mostrar u ocultar menú">☰</button>
-      <NavLink className="topbar-brand" to="/dashboard"><span className="brand-mark">M</span><span>MatrixFlow <b>Enterprise</b></span></NavLink>
-      <div className="topbar-search"><span>⌕</span><input aria-label="Buscar" placeholder="Buscar en MatrixFlow..." /><kbd>⌘ K</kbd></div>
+      <NavLink className="topbar-brand" to="/dashboard"><span className="brand-mark">S</span><span>SalesIA <b>Enterprise</b></span></NavLink>
+      <div className="topbar-search"><span>⌕</span><input aria-label="Buscar" placeholder="Buscar en SalesIA..." /><kbd>⌘ K</kbd></div>
       
       <div className="topbar-actions" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         <button className="topbar-icon" aria-label="Notificaciones">♢<i /></button>
         
         {/* Menú de usuario original */}
         <button className="user-menu" aria-label="Abrir menú de usuario" type="button">
-          <span className="avatar">{user?.name.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() ?? 'MF'}</span>
+          <span className="avatar">{user?.name.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() ?? 'SA'}</span>
           <span className="user-summary"><b>{user?.name ?? 'Usuario'}</b><small>{user?.email ?? 'Cuenta'}</small></span>
           <span>⌄</span>
         </button>
@@ -123,15 +121,14 @@ export function AppLayout() {
         <span className="nav-label">PRINCIPAL</span>
         {visibleMainNavigation.map((item) => <NavigationLink key={item.path} item={item} />)}
         <><span className="nav-label">EMPRESA</span><NavigationGroup key={location.pathname} label="Empresa" icon="⌂" items={companyNavigation} initialOpen={companyActive} collapsed={!sidebarOpen} isAdmin={isAdmin} /></>
-        {canAnalyze && <><span className="nav-label">ANÁLISIS MATEMÁTICO</span><NavigationGroup key={location.pathname} label="Análisis matemático" icon="∑" items={analysisNavigation} initialOpen={analysisActive} collapsed={!sidebarOpen} /></>}
         <span className="nav-label">SISTEMA</span>
         {isAdmin && <NavigationLink item={{ label: 'Auditoría', path: '/historial', icon: '◷' }} />}
         <NavigationLink item={{ label: 'Reportes', path: '/reportes', icon: '▥' }} />
         {isAdmin && <><NavigationLink item={{ label: 'Usuarios', path: '/usuarios', icon: '♙' }} /><NavigationLink item={{ label: 'Configuración', path: '/configuracion', icon: '⚙' }} /></>}
       </nav>
-      <div className="sidebar-footer"><div className={`sidebar-status ${apiStatus === 'API conectada' ? 'connected' : 'disconnected'}`}><i /> {apiStatus}</div><small>MatrixFlow Enterprise<br />PostgreSQL · Supabase</small></div>
+      <div className="sidebar-footer"><div className={`sidebar-status ${apiStatus === 'API conectada' ? 'connected' : 'disconnected'}`}><i /> {apiStatus}</div><small>SalesIA Enterprise<br />PostgreSQL · Supabase</small></div>
     </aside>
 
-    <main className="main-content"><div className="page-content"><Outlet /></div><footer className="app-footer"><span>© 2026 MatrixFlow Enterprise</span><span>{apiStatus}</span></footer></main>
+    <main className="main-content"><div className="page-content"><Outlet /></div><footer className="app-footer"><span>© 2026 SalesIA Enterprise</span><span>{apiStatus}</span></footer></main>
   </div>
 }

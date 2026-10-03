@@ -15,7 +15,7 @@ export function HistoryPage() {
   const exportCsv = () => {
     const csvRows = [['ID', 'Acción', 'Módulo', 'Entidad', 'Estado', 'Usuario', 'IP', 'Fecha', 'Detalles'], ...filtered.map(row => [String(row.id), row.action, row.module, `${row.entity_type ?? ''} ${row.entity_id ?? ''}`.trim(), row.status, row.user_email ?? '', row.ip_address ?? '', row.created_at, JSON.stringify(row.details ?? {})])]
     const csv = csvRows.map(row => row.map(value => `"${value.replaceAll('"', '""')}"`).join(',')).join('\r\n')
-    const url = URL.createObjectURL(new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8' })); const link = document.createElement('a'); link.href = url; link.download = 'matrixflow-historial.csv'; link.click(); URL.revokeObjectURL(url)
+    const url = URL.createObjectURL(new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8' })); const link = document.createElement('a'); link.href = url; link.download = 'salesia-historial.csv'; link.click(); URL.revokeObjectURL(url)
   }
   return <section className="module-page history-page">
     <div className="module-heading"><div><div className="breadcrumb-line"><span>Inicio</span><span>/</span><b>Auditoría</b></div><h1>Auditoría del sistema</h1><p>Acciones administrativas y cambios persistidos en el espacio.</p></div><button className="module-cancel" type="button" disabled={!rows.length} onClick={exportCsv}>Exportar CSV</button></div>

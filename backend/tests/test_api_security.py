@@ -43,18 +43,13 @@ def test_viewer_can_read_reports_and_master_data_but_not_operate():
             "/api/v1/resources/products",
             json={"name": "Producto", "category": "General", "price": 10, "stock": 1},
         ).status_code == 403
-        assert client.get("/api/v1/resources/vectors").status_code == 403
         assert client.get("/api/v1/audit").status_code == 403
-        assert client.post(
-            "/api/v1/operations",
-            json={"operation": "dot_product", "data": [1, 2], "other": [3, 4]},
-        ).status_code == 403
     finally:
         app.dependency_overrides[get_current_user] = lambda: test_admin_user
     assert client.get("/api/v1/audit").status_code == 200
 
 
-def test_member_can_execute_operations_but_cannot_manage_users():
+def test_member_can_manage_sales_but_cannot_manage_users():
     with TestSessionLocal() as db:
         role = Role(name="member")
         db.add(role)
@@ -71,17 +66,17 @@ def test_member_can_execute_operations_but_cannot_manage_users():
 
     app.dependency_overrides[get_current_user] = lambda: member
     try:
-        operation = client.post(
-            "/api/v1/operations",
-            json={"operation": "dot_product", "data": [1, 2], "other": [3, 4]},
+        sale = client.post(
+            "/api/v1/sales",
+            json={"code": "MEMBER-2", "branch": "Centro", "customer": "Cliente", "amount": 30},
         )
-        assert operation.status_code == 200
+        assert sale.status_code == 201
         assert client.get("/api/v1/users").status_code == 403
     finally:
         app.dependency_overrides[get_current_user] = lambda: test_admin_user
 
 
-def test_member_can_operate_sales_inventory_and_math_but_not_manage_master_data():
+def test_member_can_operate_sales_inventory_but_not_manage_master_data():
     with TestSessionLocal() as db:
         role = Role(name="member")
         db.add(role)
@@ -111,8 +106,6 @@ def test_member_can_operate_sales_inventory_and_math_but_not_manage_master_data(
             "/api/v1/resources/products",
             json={"name": "Producto", "category": "General", "price": 10, "stock": 1},
         ).status_code == 403
-        assert client.put("/api/v1/resources/vectors/1", json={}).status_code == 403
-        assert client.delete("/api/v1/resources/vectors/1").status_code == 403
     finally:
         app.dependency_overrides[get_current_user] = lambda: test_admin_user
 
@@ -124,7 +117,7 @@ def test_analyst_can_analyze_but_cannot_operate_sales_or_inventory():
         db.flush()
         analyst = User(
             role_id=role.id,
-            full_name="Math Analyst",
+            full_name="Sales Analyst",
             email="math-analyst@example.test",
             password_hash=hash_password("analyst-password-123"),
         )
@@ -138,9 +131,8 @@ def test_analyst_can_analyze_but_cannot_operate_sales_or_inventory():
         assert client.get("/api/v1/resources/products").status_code == 200
         assert client.get("/api/v1/sales").status_code == 403
         assert client.get("/api/v1/inventory").status_code == 403
-        assert client.post(
-            "/api/v1/operations",
-            json={"operation": "dot_product", "data": [1, 2], "other": [3, 4]},
-        ).status_code == 200
+        analysis = client.post("/api/v1/statistics/mean", json={"values": [10, 20, 30]})
+        assert analysis.status_code == 200
+        assert analysis.json()["result"]["value"] == 20
     finally:
         app.dependency_overrides[get_current_user] = lambda: test_admin_user

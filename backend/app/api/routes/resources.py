@@ -11,17 +11,18 @@ from app.repositories.api_record_repository import api_record_repository
 from app.schemas.branch import BranchCreate
 from app.schemas.company import CompanyCreate
 from app.schemas.configuration import ConfigurationCreate
+from app.schemas.customer import CustomerCreate
+from app.schemas.dataset import DatasetCreate, DatasetVariableCreate, ObservationCreate
+from app.schemas.employee import EmployeeCreate
 from app.schemas.product import CategoryCreate
 from app.schemas.inventory import InventoryCreate
-from app.schemas.matrix import MatrixCreate
 from app.schemas.product import ProductCreate
 from app.schemas.sale import SaleCreate
-from app.schemas.vector import VectorCreate
 from app.schemas.target import TargetCreate
 
-MEMBER_COLLECTIONS = {"sales", "inventory", "vectors", "matrices", "operations"}
-ANALYST_COLLECTIONS = {"vectors", "matrices", "operations"}
-READ_ONLY_MASTER_COLLECTIONS = {"companies", "branches", "products", "categories"}
+MEMBER_COLLECTIONS = {"sales", "inventory", "customers"}
+ANALYST_COLLECTIONS = {"datasets", "dataset_variables", "observations"}
+READ_ONLY_MASTER_COLLECTIONS = {"companies", "branches", "products", "categories", "customers", "employees", "payments", "insights"}
 
 
 def authorize_resource(request: Request, user: User = Depends(get_current_user)) -> User:
@@ -42,16 +43,20 @@ def authorize_resource(request: Request, user: User = Depends(get_current_user))
 router = APIRouter(dependencies=[Depends(authorize_resource)])
 COLLECTIONS = {
     "companies", "branches", "products", "sales", "inventory",
-    "vectors", "matrices", "operations", "configurations", "targets", "categories",
+    "configurations", "targets", "categories", "customers", "employees", "payments", "insights",
+    "datasets", "dataset_variables", "observations",
 }
 PAYLOAD_MODELS = {
     "companies": CompanyCreate,
     "branches": BranchCreate,
+    "customers": CustomerCreate,
+    "employees": EmployeeCreate,
+    "datasets": DatasetCreate,
+    "dataset_variables": DatasetVariableCreate,
+    "observations": ObservationCreate,
     "products": ProductCreate,
     "sales": SaleCreate,
     "inventory": InventoryCreate,
-    "vectors": VectorCreate,
-    "matrices": MatrixCreate,
     "configurations": ConfigurationCreate,
     "targets": TargetCreate,
     "categories": CategoryCreate,
@@ -73,6 +78,17 @@ def validate_payload(collection: str, payload: dict[str, Any]) -> dict[str, Any]
         raise HTTPException(status_code=422, detail=error.errors()) from error
 
 
+def validate_dataset_reference(db: Session, collection: str, payload: dict[str, Any]) -> None:
+    if collection == "dataset_variables":
+        parent_collection, parent_id = "datasets", payload["dataset_id"]
+    elif collection == "observations":
+        parent_collection, parent_id = "dataset_variables", payload["variable_id"]
+    else:
+        return
+    if not any(record["id"] == parent_id for record in api_record_repository.list(db, parent_collection)):
+        raise HTTPException(status_code=404, detail="El recurso relacionado no existe.")
+
+
 @router.get("/{collection}")
 def list_records(collection: str, db: Session = Depends(get_db)) -> list[dict[str, Any]]:
     validate_collection(collection)
@@ -90,11 +106,7 @@ def create_record(
     validate_collection(collection)
     payload.pop("id", None)
     validated_payload = validate_payload(collection, payload)
-    if collection == "vectors":
-        validated_payload["dimension"] = len(validated_payload["values"])
-    if collection == "matrices":
-        validated_payload["rows"] = len(validated_payload["values"])
-        validated_payload["columns"] = len(validated_payload["values"][0])
+    validate_dataset_reference(db, collection, validated_payload)
     ip_address = request.client.host if request and request.client else None
     return api_record_repository.create(db, collection, validated_payload, user.id, ip_address)
 
@@ -111,11 +123,7 @@ def update_record(
     validate_collection(collection)
     payload.pop("id", None)
     validated_payload = validate_payload(collection, payload)
-    if collection == "vectors":
-        validated_payload["dimension"] = len(validated_payload["values"])
-    if collection == "matrices":
-        validated_payload["rows"] = len(validated_payload["values"])
-        validated_payload["columns"] = len(validated_payload["values"][0])
+    validate_dataset_reference(db, collection, validated_payload)
     ip_address = request.client.host if request and request.client else None
     updated = api_record_repository.update(db, collection, record_id, validated_payload, user.id, ip_address)
     if updated is None:

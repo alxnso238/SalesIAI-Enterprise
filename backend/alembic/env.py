@@ -40,14 +40,21 @@ from app.models import (
     Inventory,
     InventoryMovement,
     Target,
-    Vector,
-    VectorValue,
-    Matrix,
-    MatrixValue,
-    Operation,
-    OperationInput,
-    OperationResult,
     AuditLog,
+    Customer,
+    Employee,
+    Payment,
+    Permission,
+    RolePermission,
+    Dataset,
+    DatasetVariable,
+    Observation,
+    StatisticalAnalysis,
+    StatisticalResult,
+    BayesAnalysis,
+    RandomVariable,
+    Insight,
+    Report,
 )
 
 target_metadata = Base.metadata
@@ -97,7 +104,8 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection,
+            target_metadata=target_metadata,
         )
 
         with context.begin_transaction():

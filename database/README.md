@@ -1,13 +1,17 @@
 # Base de datos
 
-El esquema PostgreSQL y sus migraciones están centralizados en `backend/alembic/`. FastAPI se conecta a Supabase mediante `DATABASE_URL`; el frontend no accede directamente a la base de datos. Las rutas GET/POST/PUT/DELETE están implementadas en FastAPI; el SQL solo crea el almacenamiento que esas rutas usan.
+El esquema PostgreSQL y sus migraciones están centralizados en `backend/alembic/`. FastAPI se conecta a Supabase mediante `DATABASE_URL`; el frontend no accede directamente a la base de datos.
+
+El esquema incluye clientes, empleados/vendedores, pagos, permisos por rol, datasets, variables, observaciones, análisis, resultados de Bayes, variables aleatorias, insights y reportes. `sales.customer_id` y `sales.employee_id` son opcionales.
+
+Los endpoints actuales guardan clientes, empleados, catálogos, ventas, pagos, datasets y resultados analíticos en `api_records`. Usuarios, roles y auditoría usan tablas relacionales. El SQL incluye las tablas relacionales previstas para el crecimiento del sistema.
 
 ## Supabase
 
-Para reparar o inicializar el esquema desde Supabase SQL Editor, ejecuta `supabase_schema.sql` después de crear una copia de seguridad. El script es aditivo e idempotente: crea las tablas e índices faltantes, activa RLS, crea los roles `member` y `admin` y registra la revisión Alembic actual. No elimina filas ni altera tipos de columnas ya existentes.
+Para crear la base SalesIA, pega el archivo completo `supabase_schema.sql` en Supabase SQL Editor. Crea las tablas del sistema, activa RLS, agrega los cuatro roles y registra la revisión Alembic `salesia0001`.
 
-El backend se conecta con `DATABASE_URL` usando el usuario PostgreSQL `postgres`, que omite RLS. No configures una clave `SUPABASE_KEY` en el frontend ni uses el cliente Supabase desde el navegador para los registros de negocio. El token JWT del usuario se usa para autorizar las llamadas al API.
+**Usa el script SQL o Alembic, no ambos para inicializar la misma base.** El script y la migración `salesia0001` crean el mismo esquema. Si ejecutas el SQL, no vuelvas a aplicar la migración inicial.
 
-Después de ejecutar el SQL, comprueba `GET /ready` y luego prueba el acceso autenticado a `GET /api/v1/resources/companies` y una creación `POST /api/v1/resources/companies`. El registro público crea usuarios con rol `member`; crea la primera cuenta administradora desde el backend con `python -m app.utils.create_user`.
+El backend se conecta con `DATABASE_URL` usando la cadena PostgreSQL del Session pooler (puerto 5432) y TLS (`sslmode=require`). La autorización de la aplicación se aplica mediante JWT y roles. No configures una clave `SUPABASE_KEY` en el frontend ni accedas desde el navegador directamente a las tablas.
 
-Las columnas existentes no se convierten automáticamente: el esquema previo puede conservar tipos compatibles distintos, por ejemplo timestamps con zona horaria o `BIGINT`. Revisa esos tipos antes de planificar una migración de normalización.
+Después de crear el esquema, crea la primera cuenta administradora desde el backend con `python -m app.utils.create_user`. Comprueba `GET /ready` y prueba el acceso autenticado a `GET /api/v1/resources/companies`.

@@ -6,24 +6,22 @@ import './reports-page.css'
 type ReportData = {
   sales: { current: number; records: number }
   inventory: { quantity: number; records: number }
-  operations: { completed: number }
   sales_by_month: { month: string; total: number }[]
   sales_by_branch: { branch: string; total: number }[]
   sales_by_product: { product: string; total: number; quantity: number }[]
   inventory_rotation: { product: string; stock: number; sold_quantity: number; rotation: number }[]
   target_progress: { id: number; name: string; actual: number; goal: number; completion_percent: number; unit: string; period_active: boolean; branch?: string }[]
   recent_activity: { id: number; resource: string; label: string; created_at: string }[]
-  processing: { operations_last_30_days: number }
 }
 const money = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN', maximumFractionDigits: 0 })
-const empty: ReportData = { sales: { current: 0, records: 0 }, inventory: { quantity: 0, records: 0 }, operations: { completed: 0 }, sales_by_month: [], sales_by_branch: [], sales_by_product: [], inventory_rotation: [], target_progress: [], recent_activity: [], processing: { operations_last_30_days: 0 } }
+const empty: ReportData = { sales: { current: 0, records: 0 }, inventory: { quantity: 0, records: 0 }, sales_by_month: [], sales_by_branch: [], sales_by_product: [], inventory_rotation: [], target_progress: [], recent_activity: [] }
 
 function downloadCsv(report: ReportData) {
   const averageSale = report.sales.records ? report.sales.current / report.sales.records : 0
   const rows = [['Sección', 'Elemento', 'Valor'], ['Ticket promedio', 'General', String(averageSale)], ...report.sales_by_month.map(x => ['Ventas mensuales', x.month, String(x.total)]), ...report.sales_by_branch.map(x => ['Ventas por sucursal', x.branch, String(x.total)]), ...report.sales_by_product.map(x => ['Ventas por producto', x.product, String(x.total)]), ...report.inventory_rotation.map(x => ['Rotación', x.product, String(x.rotation)]), ...report.target_progress.map(x => ['Cumplimiento', x.name, `${x.completion_percent}%`])]
   const csv = rows.map(row => row.map(value => `"${value.replaceAll('"', '""')}"`).join(',')).join('\r\n')
   const url = URL.createObjectURL(new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8' }))
-  const anchor = document.createElement('a'); anchor.href = url; anchor.download = `matrixflow-reportes-${new Date().toISOString().slice(0, 10)}.csv`; anchor.click(); URL.revokeObjectURL(url)
+  const anchor = document.createElement('a'); anchor.href = url; anchor.download = `salesia-reportes-${new Date().toISOString().slice(0, 10)}.csv`; anchor.click(); URL.revokeObjectURL(url)
 }
 
 export function ReportsPage() {
@@ -38,7 +36,7 @@ export function ReportsPage() {
   return <div className="dashboard-page reports-page">
     <div className="dashboard-heading"><div><div className="breadcrumb-line"><span>Inicio</span><span>/</span><b>Reportes</b></div><h1>Reportes empresariales</h1><p>Ventas, inventario, metas y actividad calculados desde datos persistidos.</p></div><div className="heading-actions"><button className="btn btn-outline" type="button" disabled={loading} onClick={() => downloadCsv(report)}>Exportar CSV</button></div></div>
     {error && <p className="dashboard-error" role="alert">{error}</p>}
-    <section className="report-summary-grid"><article><span>Ventas registradas</span><strong>{loading ? '…' : money.format(report.sales.current)}</strong><small>{report.sales.records} transacciones</small></article><article><span>Ticket promedio</span><strong>{loading ? '…' : money.format(averageSale)}</strong><small>Importe promedio por venta</small></article><article><span>Inventario registrado</span><strong>{loading ? '…' : report.inventory.quantity.toLocaleString('es-PE')}</strong><small>{report.inventory.records} registros</small></article><article><span>Metas activas</span><strong>{loading ? '…' : report.target_progress.filter(x => x.period_active).length}</strong><small>{report.target_progress.length} metas definidas</small></article><article><span>Operaciones matemáticas</span><strong>{loading ? '…' : report.processing.operations_last_30_days}</strong><small>últimos 30 días</small></article></section>
+    <section className="report-summary-grid"><article><span>Ventas registradas</span><strong>{loading ? '…' : money.format(report.sales.current)}</strong><small>{report.sales.records} transacciones</small></article><article><span>Ticket promedio</span><strong>{loading ? '…' : money.format(averageSale)}</strong><small>Importe promedio por venta</small></article><article><span>Inventario registrado</span><strong>{loading ? '…' : report.inventory.quantity.toLocaleString('es-PE')}</strong><small>{report.inventory.records} registros</small></article><article><span>Metas activas</span><strong>{loading ? '…' : report.target_progress.filter(x => x.period_active).length}</strong><small>{report.target_progress.length} metas definidas</small></article></section>
     <section className="report-grid">
       <article className="content-card"><div className="card-header"><div><h2>Ventas mensuales</h2><p>Importe de los últimos 12 meses</p></div></div><div className="report-month-chart" role="img" aria-label="Ventas por mes">{report.sales_by_month.map(item => <div className="report-month-column" key={item.month} title={`${item.month}: ${money.format(item.total)}`}><div className="report-month-bar" style={{ height: `${item.total ? Math.max(5, item.total / maxMonth * 100) : 2}%` }} /><span>{new Intl.DateTimeFormat('es', { month: 'short' }).format(new Date(`${item.month}-01T00:00:00`))}</span></div>)}</div>{!loading && !report.sales.records && <p className="report-empty-note">Sin ventas en el período. Registra ventas para activar el análisis temporal.</p>}</article>
       <article className="content-card"><div className="card-header"><div><h2>Ventas por sucursal</h2><p>Comparativo de ingresos</p></div></div><div className="report-bars">{report.sales_by_branch.map(item => <div className="report-bar-row" key={item.branch}><div><span>{item.branch}</span><b>{money.format(item.total)}</b></div><i><em style={{ width: `${Math.max(2, item.total / maxBranch * 100)}%` }} /></i></div>)}{!loading && !report.sales_by_branch.length && <p className="report-empty-note">No hay sucursales con ventas.</p>}</div></article>

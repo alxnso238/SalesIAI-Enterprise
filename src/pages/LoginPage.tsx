@@ -70,7 +70,7 @@ export const LoginPage = () => {
         </svg>
       </button>
       <div className="login-header">
-        <div className="login-brand"><span className="login-brand-mark">M</span><span>MatrixFlow <b>Enterprise</b></span></div>
+        <div className="login-brand"><span className="login-brand-mark">S</span><span>SalesIA <b>Enterprise</b></span></div>
         <p className="login-subtitle">{registering ? 'Crea tu cuenta de usuario' : 'Accede a tu espacio de trabajo'}</p>
       </div>
       <div className="login-tabs" role="tablist" aria-label="Acceso a la cuenta">

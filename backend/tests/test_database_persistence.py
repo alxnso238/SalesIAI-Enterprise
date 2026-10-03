@@ -8,7 +8,7 @@ client = TestClient(app)
 
 
 def test_create_and_list_survive_new_database_session():
-    payload = {"name": "MatrixFlow", "tax_id": "MF-001", "city": "Lima"}
+    payload = {"name": "SalesIA", "tax_id": "SA-001", "city": "Lima"}
     response = client.post("/api/v1/companies", json=payload)
     assert response.status_code == 201
 
@@ -19,7 +19,7 @@ def test_create_and_list_survive_new_database_session():
 
     listed = client.get("/api/v1/companies")
     assert listed.status_code == 200
-    assert listed.json()[0]["name"] == "MatrixFlow"
+    assert listed.json()[0]["name"] == "SalesIA"
 
 
 def test_resource_crud_is_persistent():

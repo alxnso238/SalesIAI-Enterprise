@@ -13,15 +13,11 @@ type TargetProgress = { id: number; name: string; actual: number; goal: number; 
 type DashboardReport = {
   sales: { current: number; records: number }
   inventory: { quantity: number; records: number }
-  operations: { completed: number }
   companies: number
   branches: number
   products: number
-  vectors: number
-  matrices: number
   targets: number
   active_targets: number
-  processing: { operations_last_30_days: number }
   inventory_rotation: ProductRotation[]
   recent_activity: ActivityRecord[]
   target_progress: TargetProgress[]
@@ -33,15 +29,11 @@ type DashboardReport = {
 const initialReport: DashboardReport = {
   sales: { current: 0, records: 0 },
   inventory: { quantity: 0, records: 0 },
-  operations: { completed: 0 },
   companies: 0,
   branches: 0,
   products: 0,
-  vectors: 0,
-  matrices: 0,
   targets: 0,
   active_targets: 0,
-  processing: { operations_last_30_days: 0 },
   inventory_rotation: [],
   recent_activity: [],
   target_progress: [],
@@ -63,6 +55,7 @@ export function DashboardPage() {
   const isMember = role === 'member'
   const isAnalyst = role === 'analyst'
   const isViewer = role === 'viewer'
+  const canOperateBusiness = isAdmin || isMember
   const canAnalyze = isAdmin || isMember || isAnalyst
   const [report, setReport] = useState(initialReport)
   const [loading, setLoading] = useState(true)
@@ -96,34 +89,30 @@ export function DashboardPage() {
     { label: 'Ventas del mes', value: currency.format(currentMonthSales), detail: 'Importe registrado', icon: '↗', tone: 'primary' },
     { label: 'Pedidos procesados', value: String(report.sales.records), detail: 'Transacciones persistidas', icon: '▤', tone: 'info' },
     { label: 'Unidades en inventario', value: report.inventory.quantity.toLocaleString('es-PE'), detail: `${report.inventory.records} movimientos`, icon: '◈', tone: 'warning' },
-    { label: 'Operaciones matemáticas', value: String(report.operations.completed), detail: 'Operaciones guardadas', icon: '⌁', tone: 'success' },
+    { label: 'Ticket promedio', value: currency.format(report.sales.records ? report.sales.current / report.sales.records : 0), detail: 'Importe promedio por venta', icon: '∿', tone: 'success' },
   ]
-  const kpis = isAdmin ? executiveKpis : isAnalyst ? [
-    { label: 'Operaciones matemáticas', value: String(report.operations.completed), detail: 'Operaciones guardadas', icon: '∑', tone: 'primary' },
-    { label: 'Vectores', value: String(report.vectors), detail: 'Recursos disponibles', icon: '◇', tone: 'info' },
-    { label: 'Matrices', value: String(report.matrices), detail: 'Recursos disponibles', icon: '▧', tone: 'success' },
-  ] : isMember ? [
+  const kpis = isAdmin ? executiveKpis : isMember ? [
     executiveKpis[0], executiveKpis[2], executiveKpis[3],
   ] : [
-    executiveKpis[0], executiveKpis[1], executiveKpis[2],
+    executiveKpis[0], executiveKpis[1], executiveKpis[3],
   ]
   const dashboardTitle = isAdmin ? 'Dashboard ejecutivo' : isMember ? 'Panel operativo' : isAnalyst ? 'Panel de análisis' : 'Panel de reportes'
   const dashboardDescription = isAdmin
     ? 'Resumen de ventas, inventario e indicadores empresariales.'
-    : isMember
-      ? 'Resumen de ventas, inventario y análisis matemático.'
-      : isAnalyst
-        ? 'Actividad de vectores, matrices y operaciones.'
+      : isMember
+        ? 'Resumen de ventas, inventario y desempeño comercial.'
+        : isAnalyst
+          ? 'Indicadores estadísticos y evolución de las ventas.'
         : 'Indicadores disponibles en modo de solo lectura.'
 
   return <div className="dashboard-page">
     <section className="dashboard-brandbar" aria-label="Estado del espacio de trabajo">
-      <div className="dashboard-brand-lockup"><span className="dashboard-brand-mark">M</span><span><strong>MATRIXFLOW</strong><small>ENTERPRISE</small></span></div>
+      <div className="dashboard-brand-lockup"><span className="dashboard-brand-mark">S</span><span><strong>SALESIA</strong><small>ENTERPRISE</small></span></div>
       <div className={`dashboard-sync ${error ? 'offline' : ''}`}><i /> <span><small>ÚLTIMA ACTUALIZACIÓN</small><strong>{loading ? 'Sincronizando…' : error ? 'Sin conexión' : `Hoy, ${updatedAt?.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}`}</strong></span><b>{error ? 'Sin conexión' : loading ? 'Actualizando' : 'En línea'}</b></div>
     </section>
     <div className="dashboard-heading">
       <div><div className="breadcrumb-line"><span>Inicio</span><span>/</span><b>Dashboard</b></div><h1>{dashboardTitle}</h1><p>{dashboardDescription}</p></div>
-      {!isAnalyst && <div className="heading-actions"><label className="dashboard-period"><span className="sr-only">Período del gráfico</span><select value={chartRange} onChange={(event) => setChartRange(event.target.value as 'month' | 'year')}><option value="month">Este mes</option><option value="year">Últimos 12 meses</option></select></label>{canAnalyze && <Link className="dashboard-action-button" to="/operaciones">＋ Nueva operación</Link>}</div>}
+      <div className="heading-actions"><label className="dashboard-period"><span className="sr-only">Período del gráfico</span><select value={chartRange} onChange={(event) => setChartRange(event.target.value as 'month' | 'year')}><option value="month">Este mes</option><option value="year">Últimos 12 meses</option></select></label>{canOperateBusiness && <Link className="dashboard-action-button" to="/ventas">＋ Nueva venta</Link>}</div>
     </div>
     {error && <p className="dashboard-error" role="alert">{error}</p>}
     <section className={`kpi-grid ${kpis.length < 5 ? 'compact-kpis' : ''}`} aria-label="Indicadores del dashboard">
@@ -132,7 +121,7 @@ export function DashboardPage() {
         <div className="stat-card-footer"><b>{loading ? 'Consultando' : kpi.detail}</b><span>PostgreSQL</span></div>
       </article>)}
     </section>
-    {!isAnalyst && <section className="chart-grid">
+    <section className="chart-grid">
       <article className="content-card chart-card">
         <div className="card-header"><div><h2>Ventas mensuales</h2><p>Importes agrupados por mes de creación</p></div></div>
         <div className="chart-total"><strong>{loading ? '...' : currency.format(chartTotal)}</strong><span>{chartRange === 'month' ? 'Mes actual' : 'Últimos 12 meses'}</span></div>
@@ -155,7 +144,7 @@ export function DashboardPage() {
           <div className="dashboard-target-progress"><i><em style={{ width: `${featuredTargetProgress}%` }} /></i><span>Faltan {formatTargetValue(Math.max(0, featuredTarget.goal - featuredTarget.actual))} para alcanzar la meta.</span></div>
         </> : <div className="dashboard-target-empty"><p>Todavía no hay metas activas para mostrar.</p>{isAdmin && <Link to="/metas">Crear una meta</Link>}</div>}
       </article>
-    </section>}
+    </section>
     {isAdmin && <section className="data-grid">
       <article className="content-card table-card">
         <div className="card-header"><div><h2>Ventas por sucursal</h2><p>Distribución de ingresos registrados</p></div><Link className="dashboard-card-link" to="/reportes">Ver reporte →</Link></div>
@@ -172,7 +161,7 @@ export function DashboardPage() {
     {isAdmin && <section className="data-grid dashboard-summary-grid">
       <article className="content-card table-card">
         <div className="card-header"><div><h2>Resumen operativo</h2><p>Indicadores clave del espacio</p></div></div>
-        <div className="dashboard-operational-metrics"><div><span>Ticket promedio</span><strong>{currency.format(report.sales.records ? report.sales.current / report.sales.records : 0)}</strong></div><div><span>Metas activas</span><strong>{report.active_targets}</strong></div><div><span>Movimientos de inventario</span><strong>{report.inventory.records}</strong></div><div><span>Operaciones matemáticas</span><strong>{report.operations.completed}</strong></div></div>
+        <div className="dashboard-operational-metrics"><div><span>Ticket promedio</span><strong>{currency.format(report.sales.records ? report.sales.current / report.sales.records : 0)}</strong></div><div><span>Metas activas</span><strong>{report.active_targets}</strong></div><div><span>Movimientos de inventario</span><strong>{report.inventory.records}</strong></div><div><span>Ventas registradas</span><strong>{report.sales.records}</strong></div></div>
       </article>
       <article className="content-card table-card">
         <div className="card-header"><div><h2>Productos más vendidos</h2><p>Ingresos por producto</p></div></div>
@@ -189,16 +178,6 @@ export function DashboardPage() {
           <tr><td>Empresas</td><td>{loading ? '...' : report.companies}</td></tr>
           <tr><td>Sucursales</td><td>{loading ? '...' : report.branches}</td></tr>
           <tr><td>Productos</td><td>{loading ? '...' : report.products}</td></tr>
-        </tbody></table></div>
-      </article>
-    </section>}
-    {isAnalyst && <section className="data-grid">
-      <article className="content-card table-card">
-        <div className="card-header"><div><h2>Recursos matemáticos</h2><p>Vectores y matrices disponibles para análisis</p></div></div>
-        <div className="table-wrap"><table><thead><tr><th>Recurso</th><th>Total</th></tr></thead><tbody>
-          <tr><td>Vectores</td><td>{loading ? '...' : report.vectors}</td></tr>
-          <tr><td>Matrices</td><td>{loading ? '...' : report.matrices}</td></tr>
-          <tr><td>Operaciones ejecutadas</td><td>{loading ? '...' : report.operations.completed}</td></tr>
         </tbody></table></div>
       </article>
     </section>}

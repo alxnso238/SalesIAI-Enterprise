@@ -7,14 +7,14 @@ import { apiRequest, apiRoutes } from '../services/api';
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(() => {
     if (typeof window === 'undefined') return null;
-    const token = localStorage.getItem('matrixflow_token');
-    const email = localStorage.getItem('matrixflow_email');
+    const token = localStorage.getItem('salesia_token');
+    const email = localStorage.getItem('salesia_email');
     if (!token || !email) return null;
     return {
       email,
-      name: localStorage.getItem('matrixflow_name') || email,
+      name: localStorage.getItem('salesia_name') || email,
       token,
-      role: localStorage.getItem('matrixflow_role') || 'viewer',
+      role: localStorage.getItem('salesia_role') || 'viewer',
     };
   });
   const token = user?.token;
@@ -25,8 +25,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     void apiRequest<{ email: string; name: string; role: string }>(apiRoutes.auth.me)
       .then((profile) => {
         if (!active) return;
-        localStorage.setItem('matrixflow_role', profile.role);
-        localStorage.setItem('matrixflow_name', profile.name);
+        localStorage.setItem('salesia_role', profile.role);
+        localStorage.setItem('salesia_name', profile.name);
         setUser((current) => current ? { ...current, ...profile } : current);
       })
       .catch(() => undefined);
@@ -34,18 +34,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [token]);
 
   const login = (email: string, token: string, role = 'member', name = email) => {
-    localStorage.setItem('matrixflow_token', token);
-    localStorage.setItem('matrixflow_email', email);
-    localStorage.setItem('matrixflow_role', role);
-    localStorage.setItem('matrixflow_name', name);
+    localStorage.setItem('salesia_token', token);
+    localStorage.setItem('salesia_email', email);
+    localStorage.setItem('salesia_role', role);
+    localStorage.setItem('salesia_name', name);
     setUser({ email, name, role, token });
   };
 
   const logout = () => {
-    localStorage.removeItem('matrixflow_token');
-    localStorage.removeItem('matrixflow_email');
-    localStorage.removeItem('matrixflow_role');
-    localStorage.removeItem('matrixflow_name');
+    localStorage.removeItem('salesia_token');
+    localStorage.removeItem('salesia_email');
+    localStorage.removeItem('salesia_role');
+    localStorage.removeItem('salesia_name');
     setUser(null);
   };
 

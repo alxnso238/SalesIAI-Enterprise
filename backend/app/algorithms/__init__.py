@@ -1,1 +1,1 @@
-"""Operaciones matematicas puras basadas en NumPy."""
+"""Algoritmos estadisticos del dominio SalesIA."""
