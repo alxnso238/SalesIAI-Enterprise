@@ -12,6 +12,6 @@ Para crear la base SalesIA, pega el archivo completo `supabase_schema.sql` en Su
 
 **Usa el script SQL o Alembic, no ambos para inicializar la misma base.** El script y la migración `salesia0001` crean el mismo esquema. Si ejecutas el SQL, no vuelvas a aplicar la migración inicial.
 
-El backend se conecta con `DATABASE_URL` usando la cadena PostgreSQL del Session pooler (puerto 5432) y TLS (`sslmode=require`). La autorización de la aplicación se aplica mediante JWT y roles. No configures una clave `SUPABASE_KEY` en el frontend ni accedas desde el navegador directamente a las tablas.
+El backend se conecta con `DATABASE_URL` usando la URI PostgreSQL del Session pooler (puerto 5432) y TLS (`sslmode=require`). Cópiala desde **Connect > Session pooler** en Supabase y configúrala en `backend/.env`. La aplicación usa SQLAlchemy directamente, por lo que las variables `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY` y `SUPABASE_JWKS_URL` de la opción **Server** no reemplazan esta URI ni son necesarias para la conexión actual. Mantén `DATABASE_URL` y las claves secretas solo en el backend, nunca en variables `VITE_*` ni en el navegador. La autorización de la aplicación se aplica mediante JWT y roles.
 
 Después de crear el esquema, crea la primera cuenta administradora desde el backend con `python -m app.utils.create_user`. Comprueba `GET /ready` y prueba el acceso autenticado a `GET /api/v1/resources/companies`.

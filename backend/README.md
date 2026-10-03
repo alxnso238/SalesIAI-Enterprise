@@ -17,7 +17,9 @@ alembic upgrade head
 
 Documentación interactiva: `http://localhost:8000/docs`
 
-En `backend/.env`, usa la URI **Session pooler** de Supabase con `sslmode=require`. `JWT_SECRET_KEY` debe ser un secreto independiente de al menos 32 caracteres; genera uno con `openssl rand -hex 32`. `CORS_ORIGINS` debe ser una lista JSON con los orígenes frontend autorizados. Las plantillas `backend/.env.example` y `.env.example` no contienen credenciales.
+En `backend/.env`, usa la URI **Session pooler** de Supabase (puerto 5432) con `sslmode=require`; reemplaza los marcadores de `backend/.env.example` por los valores de **Connect > Session pooler** en Supabase. Si la contraseña contiene caracteres especiales, codifícalos como URL encoding. `JWT_SECRET_KEY` debe ser un secreto independiente de al menos 32 caracteres; genera uno con `openssl rand -hex 32`. `CORS_ORIGINS` debe ser una lista JSON con los orígenes frontend autorizados. Las plantillas `backend/.env.example` y `.env.example` no contienen credenciales.
+
+La aplicación actual accede a PostgreSQL con SQLAlchemy y necesita `DATABASE_URL`. Las variables `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY` y `SUPABASE_JWKS_URL` que aparecen en la opción **Server** del panel son para la API/SDK de Supabase; no sustituyen la URI de PostgreSQL y no son necesarias para esta conexión. No pongas contraseñas ni claves secretas en variables `VITE_*` del frontend.
 
 El primer administrador se crea tras aplicar las migraciones. El comando solicita nombre, correo y contraseña interactivamente; no escribas contraseñas en archivos ni en comandos:
 
